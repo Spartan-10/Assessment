@@ -4,7 +4,7 @@
 
 Note: This implementation is using Spring 3.0
 
-####Implementation Approach
+#### Implementation Approach
 
 To implement the requirements using Java Spring Batch, I have followed below-mentioned steps:
 
@@ -29,13 +29,13 @@ To implement the requirements using Java Spring Batch, I have followed below-men
 
 * Create Controller(JobController): Implemented a RestController with PostMapping. This Endpoint is responsible for explicitly running a batch Job. This controller is enabled only when spring profile is REST.
 
-####Run Configuration:
+#### Run Configuration:
 ```text
 MainClass : com.interview.assessment.AssessmentApplication
 VM args : -Dspring.profiles.active=REST or SCHEDULER
 ```
 
-####Output:
+#### Output:
 
-![](E:\eclipse_workspace_1\assessment\output.png)
+![](https://github.com/Spartan-10/Assessment/blob/master/output.png)
 
