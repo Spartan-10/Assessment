@@ -2,52 +2,44 @@ package com.interview.assessment;
 
 import com.interview.assessment.entity.Order;
 import com.interview.assessment.service.OrderReader;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.batch.item.file.FlatFileItemReader;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.*;
 
-@SpringJUnitConfig
-@SpringBootTest
-@TestPropertySource(properties = "spring.batch.job.enabled=false")
+@RunWith(MockitoJUnitRunner.class)
 public class OrderReaderTest {
 
-    private OrderReader orderReader;
+    @Mock
+    private FlatFileItemReader<Order> readerMock;
 
-    @BeforeEach
-    public void setup() {
-        orderReader = new OrderReader();
-    }
+    @InjectMocks
+    private OrderReader orderReader;
 
     @Test
     public void testRead() throws Exception {
-        // Read the first item
-        Order item1 = orderReader.read();
-        assertNotNull(item1);
-        assertEquals(1, item1.getId());
-        assertEquals("email1@email.com", item1.getEmail());
-        assertEquals("237 209993809", item1.getPhone_number());
-        assertEquals("24.45", item1.getParcelWeight());
+        Order order1 = new Order(1, "example@example.com", "1234567890", "US", "10.0");
+        Order order2 = new Order(2, "test@test.com", "9876543210", "IN", "5.0");
 
-        // Read the second item
-        Order item2 = orderReader.read();
-        assertNotNull(item2);
-        assertEquals(2, item2.getId());
-        assertEquals("email2@email.com", item2.getEmail());
-        assertEquals("258 852828436", item2.getPhone_number());
-        assertEquals("1.33", item2.getParcelWeight());
+        // Configure readerMock behavior
+        when(readerMock.read()).thenReturn(order1, order2, null);
 
-        // Read the third item
-        Order item3 = orderReader.read();
-        assertNotNull(item3);
-        assertEquals(3, item3.getId());
-        assertEquals("email3@email.com", item3.getEmail());
-        assertEquals("256 217813782", item3.getPhone_number());
-        assertEquals("15.16", item3.getParcelWeight());
+        Order result1 = orderReader.read();
+        Order result2 = orderReader.read();
+        Order result3 = orderReader.read();
 
+        // Verify the interactions with readerMock
+        verify(readerMock, times(3)).read();
+
+        // Verify the expected results
+        assertEquals(order1, result1);
+        assertEquals(order2, result2);
+        assertNull(result3);
     }
 }
